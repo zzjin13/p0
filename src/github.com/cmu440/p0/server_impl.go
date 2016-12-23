@@ -70,11 +70,13 @@ func (mes *multiEchoServer) Close() {
 	}
 	// go routines should be signaled to return
 
+	fmt.Printf("server was closed\n")
 	return
 }
 
 func (mes *multiEchoServer) Count() int {
 	// TODO: implement this!
+	fmt.Printf("%d clients now!\n", mes.cnt)
 	return mes.cnt
 }
 
@@ -90,6 +92,7 @@ type client struct{
 }
 
 func (mes *multiEchoServer) sendToAll(s []byte) {
+	fmt.Printf("server broadcast '%s' !\n", s)
 	for i := 0; i < mes.cnt; i ++ {
 		cl := mes.clients[i]
 
@@ -119,6 +122,8 @@ func (mes *multiEchoServer) closeClient(cl *client) {
 	mes.mutex.Unlock()
 
 	//free struct client
+
+	fmt.Printf("client %d was closed!\n", cl.connIndex)
 }
 
 func (mes *multiEchoServer) EchoServer(cl *client) {
@@ -144,7 +149,7 @@ func (mes *multiEchoServer) EchoServer(cl *client) {
 		n, err := conn.Read(buf)
 		switch err {
 		case nil:
-			fmt.Printf("Client %d send a message: %s \n", cl.connIndex, buf)
+			fmt.Printf("Client %d send a message: '%s' \n", cl.connIndex, buf)
 			mes.sendToAll(buf[0:n])
 		case io.EOF:
 			fmt.Printf("Warning: End of data: %s \n", err)
