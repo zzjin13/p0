@@ -65,8 +65,8 @@ func (mes *multiEchoServer) Start(port int) error {
 
 func (mes *multiEchoServer) Close() {
 	// TODO: implement this!
-	for _, cl := range mes.clients {
-		mes.closeClient(cl)
+	for i := 0; i < mes.cnt; i ++ {
+		mes.closeClient(mes.clients[i])
 	}
 	// go routines should be signaled to return
 
@@ -90,7 +90,9 @@ type client struct{
 }
 
 func (mes *multiEchoServer) sendToAll(s []byte) {
-	for _, cl := range mes.clients {
+	for i := 0; i < mes.cnt; i ++ {
+		cl := mes.clients[i]
+
 		// not full
 		cl.mutex.Lock()
 
